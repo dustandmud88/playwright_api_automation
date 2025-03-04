@@ -2,7 +2,6 @@ import os
 
 
 class Config:
-
     LIST_OF_ENVIRONMENTS = ['dev', 'qa']
     DICT_BASE_URLS = {
         "dev": "https://api.github.com",
