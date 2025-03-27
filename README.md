@@ -13,3 +13,13 @@ Following command will generate basic html report on the report folder under pro
  ~~~
 pytest steps/test_issues_steps.py -v --html=report/report.html
  ~~~
+
+
+## Parallelism
+### Use pytest-xdist
+In order to enable parallelism use -n parameter to indicate how many threads(workers) we desire.
+Note: Possible bug. Be aware that after executing without the n and then using -n parameter 
+the first time we execute may fail, but then it won't if we continue using the -n parameter.
+ ~~~
+pytest steps/test_issues_steps.py -v --html=report/report.html -n 3
+ ~~~
