@@ -49,3 +49,16 @@ the first time we execute may fail, but then it won't if we continue using the -
  ~~~
 pytest steps/test_issues_steps.py -v --html=report/report.html -n 3
  ~~~
+
+## Logging
+### Option 1. Enable on Console: Log request & response 
+To enable please add parameter -s to disable output capturing. We add v to show the Scenarios
+with PASSED or FAIL on the console at the end of each of them.
+ ~~~
+pytest steps/test_issues_steps.py -v -s
+ ~~~
+### Option 2. Enable on Pytest-html:  
+There's no need to add a special parameter just run with the usual html param.
+ ~~~
+ pytest steps/test_issues_steps.py --html=report/report.html
+ ~~~
