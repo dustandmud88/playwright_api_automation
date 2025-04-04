@@ -1,11 +1,9 @@
 import json
-import logging
-import os
-from json import JSONDecodeError
-
-import allure_commons
-from playwright.sync_api import sync_playwright
 import allure
+
+from json import JSONDecodeError
+from playwright.sync_api import sync_playwright
+from api.utils import load_json_header
 
 
 class APIClient:
@@ -13,24 +11,21 @@ class APIClient:
 
     def __init__(self, config):
         self.base_url = config.BASE_URL
-        self.headers = {
-            "Accept": "application/vnd.github+json",
-            "Authorization": "Bearer " + config.GITHUB_API_TOKEN,
-            "X-GitHub-Api-Version": "2022-11-28"
-        }
 
-    def make_request(self, method, endpoint, payload=None):
+    def make_request(self, method, endpoint, headers=None, payload=None):
         with (sync_playwright() as p):
+            if not headers:
+                headers = load_json_header("common_headers.json")
             # Log request details
             print("\n***New Request***")
             print(f"Request: {method} {self.base_url}{endpoint}")
-            print(f"Headers: {json.dumps(self.headers, indent=self.INDENT)}")
+            print(f"Headers: {json.dumps(headers, indent=self.INDENT)}")
             if payload:
                 print(f"Payload: {json.dumps(payload, indent=self.INDENT)}")
             # Attach request to Allure report
             with allure.step(f"API Request: {method} {self.base_url}{endpoint}"):
                 # allure.attach(str(self.headers), name="Request Headers", attachment_type=allure.attachment_type.JSON)
-                allure.attach(f"{json.dumps(self.headers, indent=self.INDENT, ensure_ascii=False)}",
+                allure.attach(f"{json.dumps(headers, indent=self.INDENT, ensure_ascii=False)}",
                               name="Request Headers", attachment_type=allure.attachment_type.JSON)
                 if payload:
                     # allure.attach(str(payload), name="Request Payload", attachment_type=allure.attachment_type.JSON)
@@ -39,7 +34,7 @@ class APIClient:
 
             request_context = p.request.new_context(
                 base_url=self.base_url,
-                extra_http_headers=self.headers
+                extra_http_headers=headers
             )
             response = request_context.fetch(endpoint, method=method, data=payload)
             # Log response details

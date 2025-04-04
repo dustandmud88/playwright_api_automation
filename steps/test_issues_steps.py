@@ -1,12 +1,12 @@
-from pathlib import Path
 import pytest
+
+from pathlib import Path
 from pytest_bdd import scenarios, parsers
 from pytest_bdd.steps import given, when, then
+from api.utils import load_json_payload, load_json_header
 
-from api.utils import load_json_payload
-
-scenarios(Path(__file__).parent.parent/"features"/"issues_test.feature")
-scenarios(Path(__file__).parent.parent/"features"/"repository_test.feature")
+scenarios(Path(__file__).parent.parent / "features" / "issues_test.feature")
+scenarios(Path(__file__).parent.parent / "features" / "repository_test.feature")
 
 
 @pytest.fixture
@@ -15,8 +15,11 @@ def request_context():
 
 
 @given(parsers.parse('endpoint "{value}"'))
-def set_endpoint(request_context, config, value):
+@given(parsers.parse('endpoint "{value}" with headers "{headers_name}"'))
+def set_endpoint(request_context, config, value, headers_name=None):
     request_context["endpoint"] = value.format(**config.__dict__)
+    if headers_name:
+        request_context["headers"] = load_json_header(headers_name)
 
 
 @when(parsers.parse('I send "{http_method}" request using payload "{payload_name}"'))
@@ -37,11 +40,19 @@ def send_post_request(request_context, api_client, http_method, datatable=None, 
         temporal_body_dict = load_json_payload(payload_name)
 
     request_context["body"] = temporal_body_dict
-    request_context["response"] = api_client.make_request(
-        method=request_context["method"],
-        endpoint=request_context["endpoint"],
-        payload=request_context["body"]
-    )
+    if "headers" not in request_context.keys():
+        request_context["response"] = api_client.make_request(
+            method=request_context["method"],
+            endpoint=request_context["endpoint"],
+            payload=request_context["body"]
+        )
+    else:
+        request_context["response"] = api_client.make_request(
+            method=request_context["method"],
+            endpoint=request_context["endpoint"],
+            headers=request_context["headers"],
+            payload=request_context["body"]
+        )
 
 
 @then(parsers.parse("status {response_code:d}"))
