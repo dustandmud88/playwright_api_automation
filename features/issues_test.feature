@@ -11,3 +11,16 @@ Feature: Issues
     Given endpoint "/repos/{GITHUB_USER}/{GITHUB_REPO}/issues" with headers "common_headers.json"
     When I send "POST" request using payload "bug_report_pay.json"
     Then status 201
+
+  @smoke
+  Scenario: Get bug report information
+    Given endpoint "/repos/{GITHUB_USER}/{GITHUB_REPO}/issues"
+    When I send "POST" request with body
+      | title          | body              |
+      | [Bug] report 3 | Bug description 3 |
+    Then status 201
+    And Store response value "number" as "issue_id"
+#    TODO: to be implemented
+#    Given endpoint "/repos/{GITHUB_USER}/{GITHUB_REPO}/issues/context.issue_id"
+#    When I send "GET" request
+#    Then status 200

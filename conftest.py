@@ -43,7 +43,7 @@ def create_test_repository(api_client, config
         endpoint=f"/repos/{config.GITHUB_USER}/{config.GITHUB_REPO}"
     )
 
-    if check_repo.status == 200:
+    if check_repo['status'] == 200:
         print(f"Repository {config.GITHUB_REPO} already exists. Skipping creation.")
     else:
         # Before all
@@ -52,7 +52,7 @@ def create_test_repository(api_client, config
             endpoint="/user/repos",
             payload={"name": f'{config.GITHUB_REPO}'}
         )
-        assert new_repo.status == 201, f"Failed to create repository. Status: {new_repo.status}, Response: {new_repo.text}"
+        assert new_repo['status'] == 201, f"Failed to create repository. Status: {new_repo.status}, Response: {new_repo.text}"
         print(f"Repository {config.GITHUB_REPO} created successfully.")
 
     yield
@@ -63,5 +63,5 @@ def create_test_repository(api_client, config
             method="DELETE",
             endpoint=f"/repos/{config.GITHUB_USER}/{config.GITHUB_REPO}"
         )
-        assert deleted_repo.status == 204, f"Failed to delete repository. Status: {deleted_repo.status}"
+        assert deleted_repo['status'] == 204, f"Failed to delete repository. Status: {deleted_repo.status}"
         print(f"Repository {config.GITHUB_REPO} deleted successfully.")

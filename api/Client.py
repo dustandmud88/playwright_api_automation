@@ -48,6 +48,15 @@ class APIClient:
                 if response.text():
                     allure.attach(f"{json.dumps(response.json(), indent=self.INDENT, ensure_ascii=False)}",
                                   name="Response Body", attachment_type=allure.attachment_type.JSON)
+            try:
+                response_body = response.json()
+            except json.decoder.JSONDecodeError:
+                response_body = None
+
             print("***End of Request***\n")
 
-            return response
+            return {
+                "status": response.status,
+                "body": response_body,
+                "raw": response
+            }

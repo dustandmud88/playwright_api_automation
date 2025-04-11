@@ -2,7 +2,7 @@ import pytest
 
 from pathlib import Path
 from pytest_bdd import scenarios, parsers
-from pytest_bdd.steps import given, when, then
+from pytest_bdd.steps import given, when, then, step
 from api.utils import load_json_payload, load_json_header
 
 scenarios(Path(__file__).parent.parent / "features" / "issues_test.feature")
@@ -55,6 +55,12 @@ def send_post_request(request_context, api_client, http_method, datatable=None, 
         )
 
 
-@then(parsers.parse("status {response_code:d}"))
+@then(parsers.parse('status {response_code:d}'))
 def verify_status_code(request_context, response_code):
-    assert request_context['response'].status == response_code
+    assert request_context['response']['status'] == response_code
+
+
+@step(parsers.parse('Store response value "{key}" as "{alias}"'))
+def store_response_value(request_context, key, alias):
+    response_body = request_context['response']['body']
+    request_context[f'{alias}'] = response_body[f'{key}']
