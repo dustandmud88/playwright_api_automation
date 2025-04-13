@@ -50,3 +50,13 @@ def load_json_header(filename):
 
 def extract_curly_vars(input_string):
     return re.findall(r'\{([\w]+)\}', input_string)
+
+
+def get_nested_response_value(response, json_path):
+    keys = json_path.split('.')
+    for key in keys:
+        if isinstance(response, dict) and key in response:
+            response = response[key]
+        else:
+            return None  # Key not found
+    return response

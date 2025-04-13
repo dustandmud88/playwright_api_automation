@@ -19,7 +19,8 @@ Feature: Issues
       | title          | body              |
       | [Bug] report 3 | Bug description 3 |
     Then status 201
-    And Store response value "number" as "issue_id"
+    And Store response value
+      | number | issue_id |
     Given endpoint "/repos/{GITHUB_USER}/{GITHUB_REPO}/issues/{issue_id}"
     When I send "GET" request
     Then status 200

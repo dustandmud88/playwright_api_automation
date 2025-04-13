@@ -3,8 +3,7 @@ import pytest
 from pathlib import Path
 from pytest_bdd import scenarios, parsers
 from pytest_bdd.steps import given, when, then, step
-from api.utils import load_json_payload, load_json_header, extract_curly_vars
-
+from api.utils import load_json_payload, load_json_header, extract_curly_vars, get_nested_response_value
 
 scenarios(Path(__file__).parent.parent / "features" / "issues_test.feature")
 scenarios(Path(__file__).parent.parent / "features" / "repository_test.feature")
@@ -72,7 +71,13 @@ def verify_status_code(request_context, response_code):
     assert request_context['response']['status'] == response_code
 
 
-@step(parsers.parse('Store response value "{key}" as "{alias}"'))
-def store_response_value(request_context, key, alias):
+@step(parsers.parse('Store response value'))
+def store_response_value(request_context, datatable=None):
     response_body = request_context['response']['body']
-    request_context[f'{alias}'] = response_body[f'{key}']
+    if datatable and len(datatable[0]) == 2:
+        for row in datatable:
+            key = row[0]
+            alias = row[1]
+            request_context[f'{alias}'] = get_nested_response_value(response_body, key)
+    else:
+        raise ValueError('datatable of step not provided with at least one row with 2 columns')
