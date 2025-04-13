@@ -20,7 +20,6 @@ Feature: Issues
       | [Bug] report 3 | Bug description 3 |
     Then status 201
     And Store response value "number" as "issue_id"
-#    TODO: to be implemented
-#    Given endpoint "/repos/{GITHUB_USER}/{GITHUB_REPO}/issues/context.issue_id"
-#    When I send "GET" request
-#    Then status 200
+    Given endpoint "/repos/{GITHUB_USER}/{GITHUB_REPO}/issues/{issue_id}"
+    When I send "GET" request
+    Then status 200

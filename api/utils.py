@@ -46,3 +46,7 @@ def load_json_header(filename):
         headers_replaced[key] = value
 
     return headers_replaced
+
+
+def extract_curly_vars(input_string):
+    return re.findall(r'\{([\w]+)\}', input_string)

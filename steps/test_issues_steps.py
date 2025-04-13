@@ -3,7 +3,8 @@ import pytest
 from pathlib import Path
 from pytest_bdd import scenarios, parsers
 from pytest_bdd.steps import given, when, then, step
-from api.utils import load_json_payload, load_json_header
+from api.utils import load_json_payload, load_json_header, extract_curly_vars
+
 
 scenarios(Path(__file__).parent.parent / "features" / "issues_test.feature")
 scenarios(Path(__file__).parent.parent / "features" / "repository_test.feature")
@@ -17,7 +18,18 @@ def request_context():
 @given(parsers.parse('endpoint "{value}"'))
 @given(parsers.parse('endpoint "{value}" with headers "{headers_name}"'))
 def set_endpoint(request_context, config, value, headers_name=None):
-    request_context["endpoint"] = value.format(**config.__dict__)
+
+    dict_env_vars = vars(config)
+    list_vars = extract_curly_vars(value)
+    for var in list_vars:
+        if var in dict_env_vars.keys():
+            value = value.replace(f'{{{var}}}', str(dict_env_vars.get(var)))
+        elif var in request_context.keys():
+            value = value.replace(f'{{{var}}}', str(request_context.get(var)))
+        else:
+            raise ValueError(f'Variable {var} on endpoint is not an Environment or request_context variable.')
+
+    request_context["endpoint"] = value
     if headers_name:
         request_context["headers"] = load_json_header(headers_name)
 
