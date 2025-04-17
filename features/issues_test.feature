@@ -1,4 +1,9 @@
+@data:demo_play_002
 Feature: Issues
+
+  Background:
+    Given Store value into request_context
+      | demo_play_002 | GITHUB_REPO |
 
   Scenario: Create a bug report with DataTable
     Given endpoint "/repos/{GITHUB_USER}/{GITHUB_REPO}/issues"
@@ -7,6 +12,7 @@ Feature: Issues
       | [Bug] report 1 | Bug description |
     Then status 201
 
+  @smoke
   Scenario: Create a bug report with external JSON file
     Given endpoint "/repos/{GITHUB_USER}/{GITHUB_REPO}/issues" with headers "common_headers.json"
     When I send "POST" request using payload "bug_report_pay.json"
@@ -24,3 +30,5 @@ Feature: Issues
     Given endpoint "/repos/{GITHUB_USER}/{GITHUB_REPO}/issues/{issue_id}"
     When I send "GET" request
     Then status 200
+
+

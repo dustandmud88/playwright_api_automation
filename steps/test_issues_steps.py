@@ -7,6 +7,7 @@ from api.utils import load_json_payload, load_json_header, extract_curly_vars, g
 
 scenarios(Path(__file__).parent.parent / "features" / "issues_test.feature")
 scenarios(Path(__file__).parent.parent / "features" / "repository_test.feature")
+scenarios(Path(__file__).parent.parent / "features" / "branches_test.feature")
 
 
 @pytest.fixture
@@ -79,5 +80,16 @@ def store_response_value(request_context, datatable=None):
             key = row[0]
             alias = row[1]
             request_context[f'{alias}'] = get_nested_response_value(response_body, key)
+    else:
+        raise ValueError('datatable of step not provided with at least one row with 2 columns')
+
+
+@step('Store value into request_context')
+def store_response_value(request_context, datatable=None):
+    if datatable and len(datatable[0]) == 2:
+        for row in datatable:
+            value = row[0]
+            alias = row[1]
+            request_context[f'{alias}'] = value
     else:
         raise ValueError('datatable of step not provided with at least one row with 2 columns')
