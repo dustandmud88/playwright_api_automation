@@ -1,9 +1,11 @@
+import json
 import pytest
-
+import pytest_check
 from pathlib import Path
 from pytest_bdd import scenarios, parsers
 from pytest_bdd.steps import given, when, then, step
-from api.utils import load_json_payload, load_json_header, extract_curly_vars, get_nested_response_value
+from api.utils import load_json_payload, load_json_header, extract_curly_vars, get_nested_response_value, \
+    load_json_response
 
 scenarios(Path(__file__).parent.parent / "features" / "issues_test.feature")
 scenarios(Path(__file__).parent.parent / "features" / "repository_test.feature")
@@ -93,3 +95,30 @@ def store_response_value(request_context, datatable=None):
             request_context[f'{alias}'] = value
     else:
         raise ValueError('datatable of step not provided with at least one row with 2 columns')
+
+
+@then('response should contain')
+def verify_status_code(request_context, datatable=None):
+    def validate_table_headers(table):
+        assert len(table) == 3, 'Datatable headers are not three'
+        assert table[0] == 'field', f"Datatable first column is not 'field', but was '{table[0]}'"
+        assert table[1] == 'action', f"Datatable second column is not 'action', but was '{table[1]}'"
+        assert table[2] == 'value', f"Datatable third column is not 'value', but was '{table[2]}'"
+
+    response_body = request_context['response']['body']
+    table_headers = datatable[0]
+    validate_table_headers(table_headers)
+
+    for row in datatable[1:]:
+        field, action, expected_value = row[0], row[1], row[2]
+        actual_value = get_nested_response_value(response_body, field)
+        if action == "equals":
+            if type(actual_value) is dict:
+                if expected_value.startswith("file:"):
+                    file_name = expected_value.split(":", 1)[1]
+                    expected_value = load_json_response(file_name)
+                else:
+                    expected_value = json.loads(expected_value)
+            pytest_check.equal(expected_value, actual_value, f"Expected {field} to be equal to {expected_value}, but actual value: {actual_value}")
+        elif action == "contains":
+            pytest_check.is_in(expected_value, actual_value, f"Expected {field} to contain {expected_value}, but actual value: {actual_value}")

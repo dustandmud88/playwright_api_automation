@@ -30,5 +30,3 @@ Feature: Issues
     Given endpoint "/repos/{GITHUB_USER}/{GITHUB_REPO}/issues/{issue_id}"
     When I send "GET" request
     Then status 200
-
-

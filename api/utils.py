@@ -7,29 +7,31 @@ from json import load
 
 def load_json_payload(filename):
     """
-    Load a JSON payload from the 'payloads' directory.
-    :param filename: Name of the JSON file.
+    Load a JSON payload from the 'data/payloads' directory.
+    :param filename: Name of the JSON file (for example: example.json).
     :return: Dictionary representing the JSON payload.
     """
-    filepath = join(Path(__file__).parent.parent, 'payloads', filename)
+    json_path = "data/payloads"
+    filepath = join(Path(__file__).parent.parent, json_path, filename)
 
     if not isfile(filepath):
-        raise FileNotFoundError(f"Payload file '{filename}' not found in 'payloads/' directory.")
+        raise FileNotFoundError(f"Payload JSON file '{filename}' not found in '{json_path}' directory.")
     with open(filepath, 'r', encoding='utf-8') as file:
         return load(file)
 
 
 def load_json_header(filename):
     """
-    Load a JSON header from the 'headers' directory. It replaces environment variables inside
+    Load a JSON header from the 'data/headers' directory. It replaces environment variables inside
     header JSON input files.
-    :param filename: Name of the JSON file.
+    :param filename: Name of the JSON file (for example: example.json).
     :return: Dictionary representing the JSON file.
     """
-    filepath = join(Path(__file__).parent.parent, 'headers', filename)
+    json_path = "data/headers"
+    filepath = join(Path(__file__).parent.parent, json_path, filename)
 
     if not isfile(filepath):
-        raise FileNotFoundError(f"Payload file '{filename}' not found in 'payloads/' directory.")
+        raise FileNotFoundError(f"Payload JSON file '{filename}' not found in '{json_path}' directory.")
     with open(filepath, 'r', encoding='utf-8') as file:
         headers_raw = load(file)
 
@@ -60,3 +62,18 @@ def get_nested_response_value(response, json_path):
         else:
             return None  # Key not found
     return response
+
+
+def load_json_response(filename):
+    """
+    Load a JSON response from the 'response' directory.
+    :param filename: Name of the JSON file (for example: example.json).
+    :return: Dictionary representing the JSON response.
+    """
+    json_path = "data/response"
+    filepath = join(Path(__file__).parent.parent, json_path, filename)
+
+    if not isfile(filepath):
+        raise FileNotFoundError(f"Response JSON file '{filename}' not found in '{json_path}' directory.")
+    with open(filepath, 'r', encoding='utf-8') as file:
+        return load(file)

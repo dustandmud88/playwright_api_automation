@@ -1,12 +1,8 @@
 import os
-import re
-
+import shutil
 import pytest
 from os import getenv
 from typing import Generator
-
-from _pytest.nodes import Item
-
 from api.Client import APIClient
 from config.Config import Config
 
@@ -72,6 +68,12 @@ def create_test_repository(api_client, config, request,
         assert new_repo[
                    'status'] == 201, f"Failed to create repository. Status: {new_repo.status}, Response: {new_repo.text}"
         print(f"Repository {data_tag} created successfully.")
+
+
+def pytest_configure():
+    if os.path.isdir("report"):
+        shutil.rmtree("report")
+    os.makedirs("report", exist_ok=True)
 
 
 @pytest.fixture(scope="session", autouse=True)

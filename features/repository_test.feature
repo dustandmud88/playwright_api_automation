@@ -9,4 +9,10 @@ Feature: Repository
     Given endpoint "/repos/{GITHUB_USER}/{GITHUB_REPO}"
     When I send "GET" request
     Then status 200
-      # TO DO: implement response body validation
+    And response should contain
+      | field       | action   | value                                                                     |
+      | name        | equals   | demo_play_003                                                             |
+      | owner.login | contains | dustandmud                                                                |
+      | url         | equals   | https://api.github.com/repos/dustandmud88/demo_play_003                   |
+      | permissions | equals   | {"admin": true,"maintain": true,"push": true,"triage": true,"pull": true} |
+      | permissions | equals   | file:get_repository_permissions.json                                      |
