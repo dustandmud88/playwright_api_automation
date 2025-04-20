@@ -1,8 +1,12 @@
 import os
+import pdb
 import re
 from pathlib import Path
 from os.path import isfile, join
 from json import load
+
+from jsonpath_ng import parse
+from jsonpath_ng.exceptions import JsonPathParserError
 
 
 def load_json_payload(filename):
@@ -55,12 +59,22 @@ def extract_curly_vars(input_string):
 
 
 def get_nested_response_value(response, json_path):
+    try:
+        parse(json_path)
+    except JsonPathParserError as e:
+        raise AssertionError(f"Invalid JSONPath expression: '{json_path}'\nError: {e}")
+
+    if json_path.startswith("$."):
+        json_path = json_path.replace("$.", "", 1)
+
     keys = json_path.split('.')
-    for key in keys:
-        if isinstance(response, dict) and key in response:
-            response = response[key]
-        else:
-            return None  # Key not found
+    if keys != ['$']:
+        for key in keys:
+            if isinstance(response, dict) and key in response:
+                response = response[key]
+            else:
+                return None  # Key not found
+
     return response
 
 
@@ -72,7 +86,6 @@ def load_json_response(filename):
     """
     json_path = "data/response"
     filepath = join(Path(__file__).parent.parent, json_path, filename)
-
     if not isfile(filepath):
         raise FileNotFoundError(f"Response JSON file '{filename}' not found in '{json_path}' directory.")
     with open(filepath, 'r', encoding='utf-8') as file:

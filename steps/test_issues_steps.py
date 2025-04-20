@@ -115,7 +115,8 @@ def verify_status_code(request_context, datatable=None):
         assert action in action_expected_values, f"Action '{action}' not in {action_expected_values}"
 
         if action == "equals":
-            if type(actual_value) is dict:
+            if type(actual_value) in [dict, list]:
+
                 if expected_value.startswith("file:"):
                     file_name = expected_value.split(":", 1)[1]
                     expected_value = load_json_response(file_name)
@@ -132,3 +133,12 @@ def verify_status_code(request_context, datatable=None):
         elif action == "endswith":
             pytest_check.is_true(actual_value.endswith(expected_value),
                                  f"Expected {field} to endswith {expected_value}, but actual value: {actual_value}")
+
+
+@step(parsers.parse('response is equal to "{file_path}"'))
+def response_is_equal_to(request_context, file_path):
+    actual_response_body = request_context['response']['body']
+    expected_response_body = load_json_response(file_path)
+
+    assert actual_response_body == expected_response_body, \
+        f"Expected response body {expected_response_body}, but was {actual_response_body}"
