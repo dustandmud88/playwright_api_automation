@@ -37,8 +37,7 @@ def request_context():
 
 
 @pytest.fixture(scope="function", autouse=True)
-def create_test_repository(api_client, config, request,
-                           ) -> Generator[None, None, None]:
+def create_test_repository(api_client, config, request):
     data_tag = None
     for temp_marker in request.node.own_markers:
         marker = temp_marker.name
@@ -78,7 +77,7 @@ def pytest_configure():
 
 @pytest.fixture(scope="session", autouse=True)
 def delete_test_repositories(api_client, config
-                             ) -> Generator[None, None, None]:
+                             ):
     yield
     worker_id = getenv("PYTEST_XDIST_WORKER", "master")
     if worker_id == "master" and config.get_repositories():

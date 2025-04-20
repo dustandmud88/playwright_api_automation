@@ -20,7 +20,6 @@ def request_context():
 @given(parsers.parse('endpoint "{value}"'))
 @given(parsers.parse('endpoint "{value}" with headers "{headers_name}"'))
 def set_endpoint(request_context, config, value, headers_name=None):
-
     dict_env_vars = vars(config)
     list_vars = extract_curly_vars(value)
     for var in list_vars:
@@ -108,10 +107,13 @@ def verify_status_code(request_context, datatable=None):
     response_body = request_context['response']['body']
     table_headers = datatable[0]
     validate_table_headers(table_headers)
+    action_expected_values = ["equals", "contains", "startswith", "endswith"]
 
     for row in datatable[1:]:
         field, action, expected_value = row[0], row[1], row[2]
         actual_value = get_nested_response_value(response_body, field)
+        assert action in action_expected_values, f"Action '{action}' not in {action_expected_values}"
+
         if action == "equals":
             if type(actual_value) is dict:
                 if expected_value.startswith("file:"):
@@ -119,6 +121,14 @@ def verify_status_code(request_context, datatable=None):
                     expected_value = load_json_response(file_name)
                 else:
                     expected_value = json.loads(expected_value)
-            pytest_check.equal(expected_value, actual_value, f"Expected {field} to be equal to {expected_value}, but actual value: {actual_value}")
+            pytest_check.equal(expected_value, actual_value,
+                               f"Expected {field} to be equal to {expected_value}, but actual value: {actual_value}")
         elif action == "contains":
-            pytest_check.is_in(expected_value, actual_value, f"Expected {field} to contain {expected_value}, but actual value: {actual_value}")
+            pytest_check.is_in(expected_value, actual_value,
+                               f"Expected {field} to contain {expected_value}, but actual value: {actual_value}")
+        elif action == "startswith":
+            pytest_check.is_true(actual_value.startswith(expected_value),
+                                 f"Expected {field} to startswith {expected_value}, but actual value: {actual_value}")
+        elif action == "endswith":
+            pytest_check.is_true(actual_value.endswith(expected_value),
+                                 f"Expected {field} to endswith {expected_value}, but actual value: {actual_value}")
