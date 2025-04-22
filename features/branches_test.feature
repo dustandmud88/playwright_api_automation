@@ -10,6 +10,6 @@ Feature: Branches
     Given endpoint "/repos/{GITHUB_USER}/{GITHUB_REPO}/branches"
     When I send "GET" request
     Then status 200
-    And response should contain
+    And response contains
       | field | action | value                 |
       | $     | equals | file:no_branches.json |

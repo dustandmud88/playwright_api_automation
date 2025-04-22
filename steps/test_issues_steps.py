@@ -1,7 +1,10 @@
 import json
+import pdb
 import pytest
 import pytest_check
+from importlib import import_module
 from pathlib import Path
+from pydantic import ValidationError, BaseModel
 from pytest_bdd import scenarios, parsers
 from pytest_bdd.steps import given, when, then, step
 from api.utils import load_json_payload, load_json_header, extract_curly_vars, get_nested_response_value, \
@@ -96,7 +99,7 @@ def store_response_value(request_context, datatable=None):
         raise ValueError('datatable of step not provided with at least one row with 2 columns')
 
 
-@then('response should contain')
+@then('response contains')
 def verify_status_code(request_context, datatable=None):
     def validate_table_headers(table):
         assert len(table) == 3, 'Datatable headers are not three'
@@ -142,3 +145,23 @@ def response_is_equal_to(request_context, file_path):
 
     assert actual_response_body == expected_response_body, \
         f"Expected response body {expected_response_body}, but was {actual_response_body}"
+
+
+@step(parsers.parse('response matches schema from "{schema_file}" file and "{schema_name}" module'))
+def response_matches_schema(request_context, schema_file, schema_name):
+    temp_list = ['data.schema', f'{schema_file}']
+    module_name = ".".join(temp_list)
+    pdb.set_trace()
+
+    try:
+        module = import_module(module_name)
+        schema_class = getattr(module, schema_name)
+        if not issubclass(schema_class, BaseModel):
+            raise TypeError(f"{schema_name} is not a Pydantic model class")
+
+        schema_class(**request_context['response']['body'])
+
+    except (ImportError, AttributeError) as e:
+        raise AssertionError(f"Could not import schema module '{module}': {e}")
+    except ValidationError as e:
+        raise AssertionError(f"Schema validation failed: {e}")

@@ -9,7 +9,7 @@ Feature: Repository
     Given endpoint "/repos/{GITHUB_USER}/{GITHUB_REPO}"
     When I send "GET" request
     Then status 200
-    And response should contain
+    And response contains
       | field         | action     | value                                                                     |
       | $.name        | equals     | demo_play_003                                                             |
       | $.name        | startswith | demo_p                                                                    |
@@ -18,3 +18,4 @@ Feature: Repository
       | $.url         | equals     | https://api.github.com/repos/dustandmud88/demo_play_003                   |
       | $.permissions | equals     | {"admin": true,"maintain": true,"push": true,"triage": true,"pull": true} |
       | $.permissions | equals     | file:get_repository_permissions.json                                      |
+    And response matches schema from "repository.repo_schema" file and "RepoSchema" module
