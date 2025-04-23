@@ -1,5 +1,4 @@
 import json
-import pdb
 import pytest
 import pytest_check
 from importlib import import_module
@@ -151,7 +150,6 @@ def response_is_equal_to(request_context, file_path):
 def response_matches_schema(request_context, schema_file, schema_name):
     temp_list = ['data.schema', f'{schema_file}']
     module_name = ".".join(temp_list)
-    pdb.set_trace()
 
     try:
         module = import_module(module_name)

@@ -2,7 +2,6 @@ import os
 import shutil
 import pytest
 from os import getenv
-from typing import Generator
 from api.Client import APIClient
 from config.Config import Config
 
@@ -64,8 +63,8 @@ def create_test_repository(api_client, config, request):
             endpoint="/user/repos",
             payload={"name": f'{data_tag}'}
         )
-        assert new_repo[
-                   'status'] == 201, f"Failed to create repository. Status: {new_repo.status}, Response: {new_repo.text}"
+        assert new_repo['status'] == 201, \
+            f"Failed to create repository. Status: {new_repo.status}, Response: {new_repo.text}"
         print(f"Repository {data_tag} created successfully.")
 
 
@@ -76,8 +75,7 @@ def pytest_configure():
 
 
 @pytest.fixture(scope="session", autouse=True)
-def delete_test_repositories(api_client, config
-                             ):
+def delete_test_repositories(api_client, config):
     yield
     worker_id = getenv("PYTEST_XDIST_WORKER", "master")
     if worker_id == "master" and config.get_repositories():
