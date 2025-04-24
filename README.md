@@ -89,3 +89,39 @@ There's no need to add a special parameter just run with the usual param for rep
 pytest steps/test_issues_steps.py --alluredir=report/allure-results
 allure serve report/allure-results
  ~~~
+
+
+## How to validate schema of API Response
+
+### Export file based on JSON API Response
+
+In order to generate the Pydantic Schema class execute following command: 
+~~~
+ datamodel-codegen --input repo_response.json --input-file-type json --output data/schema/repository/repo_schema.py
+~~~
+Where --input param is a copy paste of API Response Body located on the root
+of the project. Name of this input file can be anything (will be temporal) . 
+Make sure a folder is created inside data/schema folder depending on the domain (repository).
+--output parameter location of the output (or future exported file) 
+that will contain the Pydantic Schema class. </br>
+After executing the command  please open the output file generated
+and rename class Model with an appropriate name. In this example,
+main class was renamed from Model to RepoSchema. Once export is done please
+delete temporal file from --input param.
+
+
+### Use step for schema validation
+
+A proper example is located on 'repository_test.feature' file and Scenario 
+'Verify repository exists' on step:
+~~~
+    And response matches schema from "repository.repo_schema" file and "RepoSchema" class
+~~~
+In this example repo_schema is the file that contains schema class or
+if response has inner JSON objects then will contain more classes one per
+each one of them. In example step, first param is the relative location of
+schema class inside schema folder with dot format (data/schema/repository/repo_schema.py) 
+and second parameter name of the file exported that contains the Pydantic 
+schema class are provided.</br></br>
+As a result, this step validates if API Response JSON body complies with schema provided. 
+

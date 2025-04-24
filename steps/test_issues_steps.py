@@ -84,7 +84,8 @@ def store_response_value(request_context, datatable=None):
             alias = row[1]
             request_context[f'{alias}'] = get_nested_response_value(response_body, key)
     else:
-        raise ValueError('datatable of step not provided with at least one row with 2 columns')
+        raise ValueError('Expected a datatable of step not provided with at least one row with 2 columns: ',
+                             datatable)
 
 
 @step('Store value into request_context')
@@ -95,7 +96,8 @@ def store_response_value(request_context, datatable=None):
             alias = row[1]
             request_context[f'{alias}'] = value
     else:
-        raise ValueError('datatable of step not provided with at least one row with 2 columns')
+        raise ValueError(f'Expected a datatable of step not provided with at least one row with 2 columns: ',
+                             datatable)
 
 
 @then('response contains')
@@ -146,8 +148,26 @@ def response_is_equal_to(request_context, file_path):
         f"Expected response body {expected_response_body}, but was {actual_response_body}"
 
 
-@step(parsers.parse('response matches schema from "{schema_file}" file and "{schema_name}" module'))
+@step(parsers.parse('response matches schema from "{schema_file}" file and "{schema_name}" class'))
 def response_matches_schema(request_context, schema_file, schema_name):
+    """
+    Validates API Response against a Pydantic schema
+
+    :param request_context: APIResponse Playwright object.
+    :param schema_file: Python file that contains the Pydantic schema class.
+    Python file path inside project is data/schema/repository/repo_schema.py
+    Argument example: repository.repo_schema.py
+    :param schema_name: Pydantic schema class that represents API Response schema.
+    Argument example: RepoSchema class
+
+    :raises TypeError: when param schema_name is not a subclass of Pydantic BaseModel class.
+    :raises AssertionError: when param schema_file is not pointing to valid module.
+    :raises AttributeError: when param schema_name class is not inside schema_file module.
+    :raises AssertionError: when one or more attributes do not comply with schema structure.
+
+    Example:
+    And response matches schema from "repository.repo_schema" file and "RepoSchema" module
+    """
     temp_list = ['data.schema', f'{schema_file}']
     module_name = ".".join(temp_list)
 
@@ -159,7 +179,9 @@ def response_matches_schema(request_context, schema_file, schema_name):
 
         schema_class(**request_context['response']['body'])
 
-    except (ImportError, AttributeError) as e:
-        raise AssertionError(f"Could not import schema module '{module}': {e}")
+    except ImportError as e:
+        raise ImportError(f"Could not import module: {e}")
+    except AttributeError as e:
+        raise AttributeError(f"Could not locate schema class inside module: {e}")
     except ValidationError as e:
         raise AssertionError(f"Schema validation failed: {e}")

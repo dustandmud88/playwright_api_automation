@@ -18,4 +18,4 @@ Feature: Repository
       | $.url         | equals     | https://api.github.com/repos/dustandmud88/demo_play_003                   |
       | $.permissions | equals     | {"admin": true,"maintain": true,"push": true,"triage": true,"pull": true} |
       | $.permissions | equals     | file:get_repository_permissions.json                                      |
-    And response matches schema from "repository.repo_schema" file and "RepoSchema" module
+    And response matches schema from "repository.repo_schema" file and "RepoSchema" class
