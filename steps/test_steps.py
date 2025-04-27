@@ -9,9 +9,9 @@ from pytest_bdd.steps import given, when, then, step
 from api.utils import load_json_payload, load_json_header, extract_curly_vars, get_nested_response_value, \
     load_json_response
 
-scenarios(Path(__file__).parent.parent / "features" / "issues_test.feature")
-scenarios(Path(__file__).parent.parent / "features" / "repository_test.feature")
-scenarios(Path(__file__).parent.parent / "features" / "branches_test.feature")
+scenarios(Path(__file__).parent.parent / "features" / "issues.feature")
+scenarios(Path(__file__).parent.parent / "features" / "repository.feature")
+scenarios(Path(__file__).parent.parent / "features" / "branches.feature")
 
 
 @pytest.fixture

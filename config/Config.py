@@ -18,15 +18,15 @@ class Config:
 
         if self.env == 'dev':
             self.GITHUB_API_TOKEN = os.getenv("GITHUB_DEV_API_TOKEN")
+            self.GITHUB_USER = os.getenv("GITHUB_DEV_USER")
         elif self.env == 'qa':
             self.GITHUB_API_TOKEN = os.getenv("GITHUB_QA_API_TOKEN")
+            self.GITHUB_USER = os.getenv("GITHUB_QA_USER")
 
         if self.GITHUB_API_TOKEN is None:
-            raise ValueError('GITHUB_API_TOKEN is not set as environment variable')
-
-        self.GITHUB_USER = os.getenv("GITHUB_USER")
+            raise ValueError(f'GITHUB_{env.upper()}_API_TOKEN is not set as environment variable')
         if self.GITHUB_USER is None:
-            raise ValueError('GITHUB_USER is not set as environment variable')
+            raise ValueError(f'GITHUB_{env.upper()}_USER is not set as environment variable')
 
         self.data_repositories = set()
 
@@ -45,9 +45,14 @@ class Config:
             f.seek(0)
             json.dump(data, f)
 
-    @staticmethod
-    def get_repositories():
+    def get_repositories(self):
         collected_values = None
-        with open("shared_data.json") as f:
-            collected_values = json.load(f)
+        try:
+            with open(self.SHARED_DATA_FILE, "r+") as f:
+                collected_values = json.load(f)
+        except FileNotFoundError:
+            print("Warning: shared_data.json not found. Using None.")
+        except json.JSONDecodeError:
+            print("Error: shared_data.json is invalid JSON. Using None.")
+
         return set(collected_values)
