@@ -24,15 +24,53 @@ BDD Lightweight API Automation Framework based on:</br>
    cd playwright_api_automation
 ~~~
 
-### 2.2. Create virtual environment
+### 2.2. Install Python 3
+In our example we'll be using version 3.13. If already installed please omit following command.
+~~~
+   brew install python@3.13
+~~~
+Once installed to make it easier to use pip and python instead of pip3 and python3.
+Open terminal if bash word is visible execute first line if zsh then execute second one
+~~~
+   vim ~/.bashrc
+   vim ~/.zshrc
+~~~
+Press i and paste following variables
+~~~
+   alias python='python3'
+   alias pip='pip3'
+~~~
+
+To save file:
+~~~
+   Press ESC key
+   Enter ':x' to save and exit vim editor
+~~~
+On terminal if bash word is visible execute first line if zsh then execute second one
+~~~
+   source ~/.bashrc
+   source ~/.zshrc
+~~~
+
+### 2.3. Install PyCharm IDE
+
+- Download and install IDE from : https://www.jetbrains.com/pycharm/download/
+- Open IDE and project from playwright_api_automation folder that was cloned. 
+- Make sure Python Interpreter is set by following steps:
 
 ~~~
-   python -m venv .venv
-   source .venv/bin/activate 
+   On Pycharm top menu-> Setting
+   Project: -> Python Interpreter
+   Add Interpreter
+      Environment -> Generate new
+         Type -> Virtualenv
+         Base python -> 3.13
+         Python path -> PATH_TO/playwright_api_automation/.venv
+   Apply and OK
 ~~~
 
-### 2.3. Install dependencies
-
+### 2.4. Install dependencies
+Once Python interpreter is set for our project execute:
 ~~~
   pip install -r requirements.txt
 ~~~
