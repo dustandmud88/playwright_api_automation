@@ -1,5 +1,5 @@
 {
   "Accept": "application/vnd.github+json",
-  "Authorization": "Bearer {{GITHUB_API_TOKEN}}",
+  "Authorization": "Bearer {{GITHUB_DEV_API_TOKEN}}",
   "X-GitHub-Api-Version": "2022-11-28"
 }
