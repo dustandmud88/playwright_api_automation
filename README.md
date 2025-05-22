@@ -235,7 +235,7 @@ Following command will generate basic html report on the report folder under pro
 <br></br>More reference at: https://pytest-html.readthedocs.io/en/latest/user_guide.html#
 
 ~~~
-   pytest steps/test_issues_steps.py -v --html=report/report.html
+   pytest steps/test_steps.py -v --html=report/report.html
 ~~~
 
 ### 6.2. pytest-json-report
@@ -246,8 +246,8 @@ and report name please use second command below.
 <br></br>More reference at: https://pypi.org/project/pytest-json-report/
 
 ~~~
-   pytest steps/test_issues_steps.py -v --json-report
-   pytest steps/test_issues_steps.py -v --json-report-file=report/report.json --json-report
+   pytest steps/test_steps.py -v --json-report
+   pytest steps/test_steps.py -v --json-report-file=report/report.json --json-report
 ~~~
 
 ### 6.3. allure-pytest
@@ -258,13 +258,13 @@ and report name please use second command below.
 <br></br>More reference at: https://allurereport.org/docs/pytest/
 
 ~~~
-    pytest steps/test_issues_steps.py -v --alluredir=report/allure-results
+    pytest steps/test_steps.py -v --alluredir=report/allure-results
     allure generate report/allure-results -o report/allure-report --clean
     allure open report/allure-report
     
     or
     
-    pytest steps/test_issues_steps.py -v --alluredir=report/allure-results
+    pytest steps/test_steps.py -v --alluredir=report/allure-results
     allure serve report/allure-results
 ~~~
 
@@ -280,8 +280,8 @@ If desire to use full CPU's could set n value as 'auto' if detection fails its s
 <br></br> More reference at: https://pytest-xdist.readthedocs.io/en/stable/
 
 ~~~
-   pytest steps/test_issues_steps.py -v --html=report/report.html -n 3
-   pytest steps/test_issues_steps.py -v --html=report/report.html -n auto
+   pytest steps/test_steps.py -v --html=report/report.html -n 3
+   pytest steps/test_steps.py -v --html=report/report.html -n auto
 ~~~
 
 ## 8. Logging
