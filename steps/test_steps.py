@@ -14,11 +14,6 @@ scenarios(Path(__file__).parent.parent / "features" / "repository.feature")
 scenarios(Path(__file__).parent.parent / "features" / "branches.feature")
 
 
-@pytest.fixture
-def request_context():
-    return {}
-
-
 @given(parsers.parse('endpoint "{value}"'))
 @given(parsers.parse('endpoint "{value}" with headers "{headers_name}"'))
 def set_endpoint(request_context, config, value, headers_name=None):
