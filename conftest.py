@@ -30,6 +30,15 @@ def config(env):
     return Config(env)
 
 
+@pytest.fixture(scope="session")
+def temporal_delete(config):
+    # TO BE DELETED - once pytest bug is fixed on delete_test_repositories
+    # Delete JSON file with GitHub repositories
+    if config.get_repositories():
+        path_to_file = config.SHARED_DATA_FILE
+        if os.path.exists(path_to_file):
+            os.remove(path_to_file)
+
 @pytest.fixture
 def request_context():
     return {}
