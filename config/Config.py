@@ -41,9 +41,10 @@ class Config:
 
         with open(self.SHARED_DATA_FILE, "r+") as f:
             data = json.load(f)
-            data.append(repo_name)
-            f.seek(0)
-            json.dump(data, f)
+            if repo_name not in data:
+                data.append(repo_name)
+                f.seek(0)
+                json.dump(data, f)
 
     def get_repositories(self):
         collected_values = None
